@@ -1,0 +1,8 @@
+- work for building fee credits
+    - pay fee in cash
+    - optionally file a form to do work for credit
+    - get credit if work is done
+- issue with casheirs entering wrong member ID
+
+
+

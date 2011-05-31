@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% load humanize %}
+
+{% block head %}
+<script type="text/javascript" src="/static/jquery.sparkline.min.js"></script>
+{% endblock head %}
+
+{% block content %}
+<span style="font-size: 60%; color: #aaaaaa">&nbsp;&nbsp;&nbsp;^--- the menu is up there</span>
+
+<br style="clear: both">
+
+      <div style="display: inline-block; float: right; margin-right: 1em">
+      <div class="subhead bg-subhead">Member Status Summary:</div>
+      <table border="0" cellpadding="4" cellspacing="0" width="100%">
+        <tbody>
+          {% for r in data.status %}
+          <tr class="{% cycle '' 'bg-shaded' %}">
+            <td>{{r.member_status__member_status_label}}</td>
+            <td align="right">{{r.count|intcomma}}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      </div>
+
+{% include "member_search_form.html" %}
+
+      <br>
+      <br>
+      Browse: {% for a in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' %}<a href="/coop/member/search?q={{ a }}*">{{ a }}</a> {% endfor %}
+      <br><br>
+
+
+      New members this month: {{ data.new_members_this_month|default:0 }}
+      (Last month:{{ data.new_members_last_month|default:0 }})
+
+      <span class="spark">{{ data.new_members_list }}</span>
+      <script type="text/javascript">
+          $(function() { $('.spark').sparkline() })
+      </script>
+
+      <br><br><br>
+      Random: <a href="/coop/member/random">active member</a> /
+            <a href="/coop/member/group/random">multi-member group</a>
+
+
+{% endblock content %}
+
+
+

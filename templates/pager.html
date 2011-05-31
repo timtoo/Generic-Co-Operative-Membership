@@ -1,0 +1,17 @@
+{# pager requires arguments: page, uri, qs (QUERY_STRING with the current page removed). It assumes the page variable is "pg" #}
+{% if page.paginator.num_pages %}
+<span class="pager">
+    <span class="current">
+        Page {{ page.number }} of {{ page.paginator.num_pages }}.
+    </span>
+
+    {% if page.has_previous %}
+        <a href="{{ uri }}?{{ qs }}&amp;pg={{ page.previous_page_number }}">&lt;&lt;previous</a>
+    {% endif %}
+
+    {% if page.has_next %}{% if page.has_previous %} | {% endif %}
+        <a href="{{ uri }}?{{ qs }}&amp;pg={{ page.next_page_number }}">next&gt;&gt;</a>
+    {% endif %}
+</span>
+{% endif %}
+

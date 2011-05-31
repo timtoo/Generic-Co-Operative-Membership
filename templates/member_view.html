@@ -1,0 +1,302 @@
+{% extends "layout.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="/static/jquery.ui.datetime.css" />
+<script type="text/javascript" src="/static/jquery.ui.datetime.min.js"></script>
+{% endblock head %}
+
+{% block content %}
+
+<table style="max-width: 610px; style: border-radius: 4px; border-top: 1px solid black " border="0" cellpadding="2" cellspacing="2">
+
+  <tbody>
+    <tr>
+      <td>
+      <div class="subhead bg-subhead"><span{% if member.member_status_id != 1 %} style="color: red"{%endif%}>{{member.member_status.member_status_label}}</span> Member #{{ member.member_id }} [{{member.user.username}}]</div>
+      <div class="subblock" style="white-space: nowrap">
+      <span style="font-weight: bold; font-size: 150%; white-space: nowrap">{{ member.user.get_full_name }}</span><br>{% include "member_view_status.html" with hours=hours fees=fees loans=loans %}
+{% for address in addresses %}
+{{address.address_html|safe}}<br><br>
+{% endfor %}
+Phone: {{ member.member_phone }}<br>
+Email: <a href="mailto:{{ member.user.email }}">{{ member.user.email }}</a><br>
+      <br>
+
+{# ------------------------ Buttons ---------------------------- #}
+{% if perms.coop.change_member %}
+<a id="edit-member-button" class="button" href="/coop/member/{{member.member_id}}/edit">Edit</a>
+<a id="add-hours-button" class="button">Work Hours</a>
+<a id="add-fee-button" class="button">Fees</a>
+{% if member.member_status.member_status_id == 1 %}<a id="resign-button" class="button">Resign</a>{% endif %}
+{% if member.member_status.member_status_id != 1 %}<a id="reactivate-button" class="button">Re-activate</a>{% endif %}
+{% endif %}
+<br style="clear: both"><br>
+
+{# ------------------ Role/Group/Flag summary ------------------ #}
+
+      <table class="bg-shaded" style="text-align: left; width: 100%;" border="0" cellpadding="0" cellspacing="2">
+        <tbody>
+          <tr>
+            <td><span style="font-style: italic;">Groups:</span><br>
+            </td>
+            <td>
+            {% for group in member.groups.all %}
+            <div>
+            <a title="opens the group view" href="/coop/member/group/{{group.member_group_id}}" title="#{{group.member_group_id}}">{{ group.member_group.member_group_name }}</a> ({{group.member_group.group_members.count}} member{{group.member_group.group_members.count|pluralize}})</td>
+            <td><span id='test-button'>[<a href="#" id="edit-groups-button">edit groups</a>]</span>
+            {% endfor %}
+            </div>
+            </td>
+          </tr>
+          <tr style="border-bottom: 1px solid gray;">
+            <td style="font-style: italic;">Roles:<br>
+            </td>
+            <td>
+            {% for role in member.roles.all %}
+            <div class="member-role-line">{{role.role_type.role_type_label}} {% if role.role_detail %}({{role.role_detail}}){% endif %}</div>
+            {% endfor %}
+            </td>
+            <td>[<a href="#" id="edit-roles-button">edit roles</a>]<br>
+            </td>
+          </tr>
+          <tr>
+            <td style="font-style: italic">Flags:<br>
+            </td>
+            <td>
+            {% for flag in member.flags.all %}
+            {{ flag.flag_type.member_flag_type_label }}{% if flag.member_flag_detail %} ({{flag.member_flag_detail}}){% endif %}{% if not forloop.last %}<br>{% endif %}
+            {% endfor %}
+            </td>
+            <td>[<a href="#" id="edit-flags-button">edit flags</a>]<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      </div><br>
+
+{# ------------------------ NOTES ---------------------------- #}
+      <div>
+      <div class="subhead bg-subhead">Notes:<div id="add-note-button" style="float: right; cursor: pointer">[<span style="color: orange">new note</span>]</div></div>
+      <div class="subblock">
+      <table style="text-align: left;" border="1" cellpadding="2" cellspacing="0" width="100%">
+        <tbody>
+          {% for note in notes %}
+          <tr class="{% cycle "" "bg-shaded" %}">
+            <td style="white-space: nowrap">{{note.member_event_ts}}<br>
+            </td>
+            <td>{{note.member_event_detail}}
+            </td>
+            <td><a href="/coop/member/{{note.added_by.member.member_id}}">{{note.added_by.first_name}}</a><br>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      </div>
+      </div>
+      <br>
+      <div class="subhead bg-subhead">Recent Events:</div>
+      <table style="text-align: left;" border="1" cellpadding="2" cellspacing="0" width="100%">
+        <tbody>
+          {% for event in events %}
+          <tr class="{% cycle "" "bg-shaded" %}">
+            <td style="white-space: nowrap">{{event.member_event_ts}}<br>
+            </td>
+            <td>{{event.event_type.member_event_type_label}}
+            </td>
+            <td>{{event.member_event_detail}}
+            </td>
+            <td>{{event.added_by.first_name}}<br>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <br>
+      <div class="subhead bg-subhead">Details:</div>
+Joined: {{member.member_ts}}&nbsp; {% if member.member_resigned_date %}(Resigned: {{member.member_resigned_date}}){% endif %}<br>
+Updated: {{member.member_update_ts}}
+      <br>
+<a class="button" id="work-log-button" href="#">Work Log</a>
+<a class="button" id="fee-log-button" href="#">Fee Log</a>
+{% if user.is_staff %}<a class="button" id="permissions-button" href="#">Permissions</a>{% endif %}
+<script>
+$(function() {
+    $('.button').button()
+})
+</script>
+
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<div><br>
+</div>
+
+<br>
+
+<br>
+
+{# ############ notes popup ############ #}
+<div id="add-note-form" title="Add Note:">
+<form action="/coop/member/update" method="post"><input type="hidden" name="add-note" value="1">
+<input type="hidden" name="member_id" value="{{member.member_id}}">
+<textarea name="member_event_detail" style="width: 100%" rows="3"></textarea>
+<div align="center"><input type="submit" value="Save Note"></div>
+{% csrf_token %}
+</form>
+<script>
+$(function() {
+    $( "#add-note-form" ).dialog({ autoOpen: false, width: 480, modal: true });
+    $( "#add-note-button" ).click(function() { $( "#add-note-form" ).dialog( "open" ); });
+});
+</script>
+</div>
+
+{# ############ hours popup ############ #}
+<div id="add-hours-form" title="Add Work Hours:">
+<form action="/coop/member/update" method="post" style="white-space: nowrap" onSubmit="return validateWorkHours(this);"><input type="hidden" name="add-hours" value="1">
+{{ add_work_hours_form.as_p }}
+<div align="center" id="add-hours-errors" class="bg-problem"></div>
+<div align="center"><input type="submit" value="Save Work"></div>
+{% csrf_token %}
+</form>
+<br><br><br><br><br><br><br>{# to compensate for height of datetime picker #}
+<script>
+var validateWorkHours = function(form) {
+    var errors = [];
+    if (document.getElementById('id_work_type').selectedIndex < 1) {
+        errors[errors.length] = 'Please select a work type.'
+    }
+    if (document.getElementById('id_work_hours').value == 0) {
+        errors[errors.length] = 'Please specify hours worked.'
+    }
+    if (! document.getElementById('id_work_start_ts').value) {
+        errors[errors.length] = 'Start time can not be blank.'
+    }
+
+    if (errors.length > 0) {
+        document.getElementById('add-hours-errors').innerHTML = errors[0];
+        return false;
+    }
+
+    return true;
+}
+
+$(function() {
+    $( "#add-hours-form" ).dialog({ autoOpen: false, width: "auto", modal: true });
+    $( "#add-hours-button" ).click(function() { $( "#add-hours-form" ).dialog( "open" ); });
+    $( "#id_work_start_ts").datetime({ value: '+1min' });
+});
+</script>
+</div>
+
+{# ############ fees popup ############ #}
+<div id="add-fee-form" title="Add/Pay Fees:">
+<form action="/coop/member/update" method="post" style="white-space: nowrap" onSubmit="return validateFeeForm(this);">{% csrf_token %}<input type="hidden" name="add-fee" value="1"><input type="hidden" name="member_id" value="{{member.member_id}}">
+{{ fee_form.as_p }}
+<div align="center" id="add-fee-errors" class="bg-problem"></div>
+<div align="center"><input type="submit" value="Add/Pay Fee"></div>
+
+<br>
+{% if outstanding_fees %}
+<div>Outstanding Fees:</div>
+<table border="0" cellspacing="1" cellpadding="0" class="grid">
+<tr>
+<th>Date</th><th>Amount</th><th>Fee</th><th>Paid</th>
+<tr>
+{% for fee in outstanding_fees %}
+<tr>
+<td>{{fee.fee_ts|date:"Y-m-d"}}</td>
+<td >${{fee.fee_amount}}</td>
+<td>{{fee.fee_type.fee_type_name}}{% if fee.fee_note %}: {{fee.fee_note}}{% endif %}</td>
+<td align="center"><input type="checkbox" name="pay-{{fee.fee_id}}"></td>
+</tr>
+{% endfor %}
+</table>{% endif %}
+{% if not outstanding_fees %}No outstanding fees.{% endif %}
+</form>
+
+<script>
+var fillFeeAmount = function() {
+    var s = $('#id_fee_type_id')[0];
+    var o = s[s.selectedIndex].text;
+    var m = /\(\$([\d.]+)\)$/.exec(o)
+    if (m) {
+        $('#id_fee_amount')[0].value = m[1];
+    }
+};
+
+var validateFeeForm = function(form) {
+    var errors = [];
+    var amount = document.getElementById('id_fee_amount').value;
+    var feetype = document.getElementById('id_fee_type_id').selectedIndex;
+    if ((feetype < 1) && amount) {
+        errors[errors.length] = 'Please select fee type.'
+    }
+    if ((feetype > 0) && (! /^[\d.]+$/.test(amount))) {
+        errors[errors.length] = 'Please specify the amount of this fee.'
+    }
+
+    if (errors.length > 0) {
+        document.getElementById('add-fee-errors').innerHTML = errors[0];
+        return false;
+    }
+    return true;
+}
+
+$(function() {
+    $( "#add-fee-form" ).dialog({ autoOpen: false, width: "auto", modal: true });
+    $( "#add-fee-button" ).click(function() { $( "#add-fee-form" ).dialog( "open" ); });
+    $('#id_fee_type_id').change(fillFeeAmount);
+});
+</script>
+</div>
+
+{# ############ resign popup ############ #}
+<div id="resign-form" title="Resign Member:">
+<form action="/coop/member/update" method="post"><input type="hidden" name="resign" value="1"><input type="hidden" name="member_id" value="{{member.member_id}}"> {% csrf_token %}
+<label for="confirm-resign">Really resign?</label><input type="checkbox" name="confirm-resign">
+<p><label for="resign-reason">Reason:</label><input type="text" name="resign-reason">
+<br><br>
+<div align="center"><input type="submit" value="Confirm Resignation"></div>
+</form>
+<script>
+$(function() {
+    $( "#resign-form" ).dialog({ autoOpen: false, width: 'auto', modal: true });
+    $( "#resign-button" ).click(function() { $( "#resign-form" ).dialog( "open" ); });
+});
+</script>
+</div>
+
+{# ############ reactivate popup ############ #}
+<div id="reactivate-form" title="Re-activate Member:">
+<form action="/coop/member/update" method="post"><input type="hidden" name="reactivate" value="1"><input type="hidden" name="member_id" value="{{member.member_id}}"> {% csrf_token %}
+<input type="checkbox" name="confirm-reactivate"> <label for="confirm-reactivate">Really re-activate?</label>
+<br><br>
+<div align="center"><input type="submit" value="Confirm Re-activation"></div>
+</form>
+<script>
+$(function() {
+    $( "#reactivate-form" ).dialog({ autoOpen: false, width: 'auto', modal: true });
+    $( "#reactivate-button" ).click(function() { $( "#reactivate-form" ).dialog( "open" ); });
+});
+</script>
+</div>
+
+<script>
+$(function() {
+//    $( "#test-button" ).button().css({height:'1em'});
+    $( "#work-log-button" ).click(function() { alert('not implemented yet') });
+    $( "#fee-log-button" ).click(function() { alert('not implemented yet') });
+    $( "#edit-groups-button" ).click(function() { alert('not implemented yet') });
+    $( "#edit-roles-button" ).click(function() { alert('not implemented yet') });
+    $( "#edit-flags-button" ).click(function() { alert('not implemented yet') });
+});
+</script>
+
+
+<br>
+{% endblock content %}
+

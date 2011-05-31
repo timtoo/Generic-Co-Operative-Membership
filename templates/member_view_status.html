@@ -1,0 +1,27 @@
+{# django #}<div style="border: 1px solid rgb(68, 68, 68); float: right; margin-left: 1em;">
+      <table style="border-top: 1px solid gray; text-align: left;" border="0" cellpadding="2" cellspacing="0">
+        <tbody>
+          <tr class="{{ hours.class }}">
+            <td style="border-bottom: 1px solid gray"><span>Work:</span></td>
+            <td style="border-bottom: 1px solid gray"><a href="#" title="Last worked: {{ hours.fulfilled_last|date:"Y-m-d" }}">{{ hours.owed|default:0 }} hours</a></td>
+          </tr>
+          <tr class="{{fees.class}}">
+            <td style="border-bottom: 1px solid gray">
+            <span>Fees:</span></div>
+            </td>
+            <td style="border-bottom: 1px solid gray">
+            <div><a href="#" title="{{fees.tip}}">{{fees.message}}</a></div>
+            </td>
+          </tr>
+          <tr class="{{loans.class}}">
+            <td>
+            <div><span>Loans:</span></div>
+            </td>
+            <td>
+            <div><a href="#" title="{{loans.tip}}">{{loans.message}}</a></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+

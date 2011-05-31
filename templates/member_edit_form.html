@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<h2>Edit Member <a href="/coop/member/{{member_id}}">#{{ member_id }}</a></h2>
+
+<table border="0" cellpadding="0" cellspacing="0">
+<tr><td>
+<form method="post">{% csrf_token %}{{ address.management_form }}
+<fieldset>
+<legend>Member Info</legend>
+{{ user_form.as_p }}
+<p><label>Created:</label> {{ member.member_ts }}</p>
+<p><label>Updated:</label> {{ member.member_update_ts }}</p>
+</fieldset>
+<fieldset><legend>Address(es)</legend>
+{% for a in address %}
+{% if forloop.last %}<div align="center" class="bg-shaded"><i>Add new address:</i></div>{% endif %}
+{{ a.as_p }}
+{% if a.instance.address_update_ts %}<p><label>Updated:</label> {{ a.instance.address_update_ts }}</p>{% endif %}
+{% if not forloop.last %}<hr>{% endif %}
+{% endfor %}
+</fieldset>
+<input type="Submit" value="Save Changes >>">
+</form>
+</td></tr></table>
+
+{% endblock content %}
+
+
+

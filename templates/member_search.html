@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div>
+{% include "member_search_form.html" %}
+<br>
+</div>
+
+<div id="results">
+
+{% if results %}
+<div class="result-summary">Found {{results.paginator.count}} Members.
+{% include "pager.html" with uri="/coop/member/search" page=results qs=QUERY_STRING %}
+</div>
+<br>
+{% for r in results.object_list %}
+<div class="result-item">
+<b class="member-status-{{r.member.member_status_id}}">{{r.member.get_full_name_reverse}}</b>
+[<a href="/coop/member/{{r.member_id}}">{{r.member.user.username}}</a>]
+{% if r.member.user.email %}&lt;<a href="mailto:{{r.member.user.email}}">{{r.member.user.email}}</a>&gt;{% endif %}
+
+{% if r.headline %}<div class="result-snippet"><i>Context:</i> {{ r.headline|safe }} <i>[rank:&nbsp;{{r.rank}}]</i></div>{% endif %}
+</div>
+<br>
+
+{% endfor %}
+
+{% include "pager.html" with uri="/coop/member/search" page=results qs=QUERY_STRING %}
+
+{% endif %}
+
+</div>
+
+
+{% endblock content %}
+
+
+

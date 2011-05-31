@@ -1,0 +1,82 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+
+<h2>Members of {{ group.member_group_name }} ({{group.member_group_type.member_group_type_label}} #{{group.member_group_id}})</h2>
+
+
+<table border="0" cellpadding="5" cellspacing="0">
+<tr>
+<th>ID</th>
+<th>Login</th>
+<th>Name</th>
+<th>Email</th>
+<th>Phone</th>
+<th>Status</th>
+<th>Grouped</th>
+</tr>
+
+{% for gm in members %}
+<tr class="{% cycle '' 'bg-shaded' %}">
+<td class="vrule"><a href="/coop/member/{{gm.member_id}}">{{ gm.member_id }}</a></td>
+<td class="vrule">{{ gm.member.user.username }}</td>
+<td class="vrule">{{ gm.member.user.get_full_name }}</td>
+<td class="vrule"><a href="mailto:{{ member.user.email }}">{{ gm.member.user.email }}</a></td>
+<td class="vrule">{{ gm.member.member_phone }}</td>
+<td class="vrule">{{ gm.member.member_status.member_status_label }}</td>
+<td>{{ gm.member_group_member_ts|date:"Y-m-d" }}</td>
+</tr>
+{% endfor %}
+
+</table>
+
+[<a href="/coop/member/add?member_group_id={{ group.member_group_id }}">Add New Member</a>]
+
+<br><br>
+
+      <div class="subhead bg-subhead">Notes for Group Members:</div>
+      <div class="subblock">
+      <table style="text-align: left;" border="1" cellpadding="2" cellspacing="0" width="100%">
+        <tbody>
+          {% for note in notes %}
+          <tr class="{% cycle "" "bg-shaded" %}">
+            <td style="white-space: nowrap">{{note.member_event_ts}}<br>
+            </td>
+            <td>{{note.member.user.first_name}} [<a href="/coop/member/{{note.member.member_id}}">{{note.member.user.username}}</a>]
+            </td>
+            <td>{{note.member_event_detail}}
+            </td>
+            <td><a href="/coop/member/{{note.added_by.member.member_id}}">{{note.added_by.first_name}}</a><br>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      </div>
+      </div>
+
+<br>
+      <div class="subhead bg-subhead">Recent Events for Group:</div>
+      <table style="text-align: left;" border="1" cellpadding="2" cellspacing="0" width="100%">
+        <tbody>
+          {% for event in events %}
+          <tr class="{% cycle "" "bg-shaded" %}">
+            <td style="white-space: nowrap">{{event.member_event_ts}}<br>
+            </td>
+            <td>{{event.member.user.first_name}} [<a href="/coop/member/{{event.member.member_id}}">{{event.member.user.username}}</a>]
+            <td>{{event.event_type.member_event_type_label}}
+            </td>
+            <td>{{event.member_event_detail}}
+            </td>
+            <td>{{event.added_by.first_name}}<br>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+{% endblock content %}
+
+
+

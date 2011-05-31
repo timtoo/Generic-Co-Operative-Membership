@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>{{title|default:"Member Admin"}}</title>
+<link rel="stylesheet" href="/static/style.css" />
+<link rel="stylesheet" href="/static/custom-theme/jquery-ui-1.8.13.custom.css" />
+<script type="text/javascript" src="/static/jquery-1.5.2.min.js"></script>
+<script type="text/javascript" src="/static/jquery-ui-1.8.13.custom.min.js"></script>
+<script type="text/javascript" src="/static/jquery.hoverIntent.minified.js"></script>
+{% block head %}{% endblock head %}
+</head>
+<body><div id="header-hover"><div id="header" class="bg-header"><div id="header-branding" style="float: left"><a href="/coop/" style="color: inherit; text-decoration: inherit; font: inherit">{{ settings.coop_name }} Membership System</a></div>Login: {{ user.username|default:"?" }}
+</div><ul class="header-menu header bg-header" style="position: absolute; display: none; margin: 0px;">
+{% if perms.coop.view %}<li><a href="/coop/member/search">Find Member</a></li>{% endif %}
+{% if perms.coop.add_member %}<li><a href="/coop/member/add">Add Member</a></li>{% endif %}
+{% if user.is_staff %}<li><a href="/admin/">Admin</a></li>{% endif %}
+<li><a href="/coop/logout">Logout</a></li>
+</ul>
+</div>
+<div id="content">
+{% block content %}{% endblock content %}
+</div>
+
+{% block footer %}{% endblock footer %}
+
+<script type="text/javascript">
+$(document).ready(function() {
+
+   function show() {
+     var menu = $(this);
+     menu.children(".header-menu").slideDown(200);
+   }
+
+   function hide() {
+     var menu = $(this);
+     menu.children(".header-menu").slideUp(200);
+   }
+
+   $("#header-hover").hoverIntent({
+     sensitivity: 1, // number = sensitivity threshold (must be 1 or higher)
+     interval: 50,   // number = milliseconds for onMouseOver polling interval
+     over: show,     // function = onMouseOver callback (required)
+     timeout: 300,   // number = milliseconds delay before onMouseOut
+     out: hide       // function = onMouseOut callback (required)
+   });
+
+ });
+</script>
+
+</body>
+</html>
+

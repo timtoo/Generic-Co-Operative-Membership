@@ -1,0 +1,168 @@
+body {
+    margin:0;
+    padding:0;
+    background:white;
+    color:black;
+    font-family: Sans-Serif;
+}
+
+td {
+    vertical-align: top;
+}
+
+.bg-header { background: #004080; }
+.bg-subhead { background: #408000; }
+.bg-ok { background-color: #33CC00; }
+.bg-warn { background-color: #ffff99; }
+.bg-problem { background-color: #ff6666; }
+.bg-shaded { background-color: #eeeeee }
+
+.vrule { border-right: 1px solid #aaaaaa }
+.hrule { border-bottom: 1px solid #aaaaaa }
+
+/* copied from subhead & bg-subhead */
+th {
+      background: #408000;
+      color: white;
+      font-weight: bold;
+      padding: 2px 5px 2px 5px;
+      border-radius: 5px 5px 0px 0px;
+    }
+
+a { text-decoration: none }
+a:hover { text-decoration: underline }
+
+fieldset {
+    border-radius: 5px
+}
+
+#header {
+    color: white;
+    text-align: right;
+    padding: 3px;
+    white-space: nowrap;
+    box-shadow: 0px 0px 4px #000;
+}
+
+#header-branding {
+    font-weight: bold;
+}
+
+.dialog-form {
+    border: 1px solid black;
+    padding: 1em;
+    display: inline-block;
+    border-radius: 5px;
+    box-shadow: 3px 3px 4px #000;
+}
+
+.subhead {
+  color: white;
+  font-weight: bold;
+  padding: 2px 5px 2px 5px;
+  border-radius: 5px 5px 0px 0px;
+}
+
+.subblock {
+  padding: 2px 5px 2px 5px;
+}
+
+.header-menu {
+    border-top: 1px solid grey;
+    white-space: nowrap;
+    box-shadow: 0px 4px 4px #000;
+    margin: 4px;
+    padding: 0px;
+    list-style: none;
+}
+
+.header-menu li {
+    padding: 0px;
+    margin: 0px;
+}
+
+.header-menu a {
+    text-decoration: none;
+    display: block;
+    color: white;
+    padding: 10px;
+}
+
+.header-menu a:hover {
+    background-color: #74C2E1;
+    color: black;
+}
+
+#content {
+    padding-left: 3px;
+    padding-right: 3px;
+}
+
+form p {
+    display: block;
+    margin: 0px;
+    clear: both;
+}
+
+form label {
+    width: 8em;
+    display: inline-block;
+    background: #eee;
+    padding: 1px 5px 1px 5px;
+    margin: 0px;
+    border-radius: 5px 0px 0px 5px;
+    vertical-align: top;
+}
+
+form .helptext {
+    display: block;
+    margin-left: 11em;
+    margin-right: 11em;
+    font-size: 75%;
+    color: #999;
+}
+
+ul.errorlist {
+    color: red;
+    margin: 0px;
+    padding: 0px;
+    margin-left: 11em;
+    margin-right: 11em;
+    list-style-type: none;
+    font-size: 75%;
+    display: block;
+}
+
+
+#results {
+    max-width: 610px;
+}
+
+.result-item {
+
+}
+
+.result-snippet {
+    xbackground-color: wheat;
+    font-size: 80%;
+}
+
+.member-status-1 {
+    color: green;
+}
+
+.member-status-2, .member-status-3, .member-status-4 {
+    color: red;
+}
+
+.member-status-0 {
+    color: grey;
+}
+
+.result-summary {
+    border-bottom: 1px solid #cccccc;
+}
+
+.grid td {
+    padding-right: 0.5em
+}
