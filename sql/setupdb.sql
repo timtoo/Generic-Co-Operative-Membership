@@ -11,8 +11,13 @@
 CREATE LANGUAGE plpgsql;
 
 -- see: http://www.laudatio.com/wordpress/2008/11/05/postgresql-83-to_ascii-utf8/
-CREATE OR REPLACE FUNCTION to_ascii(bytea, name)
-RETURNS text STRICT AS 'to_ascii_encname' LANGUAGE internal;
+-- NOTE: must be executed by superuser to access "language internal".
+-- It would be better to use postgresql 9+ unaccent() function.
+-- For now we assume the following has been executed on the database
+-- prior to this point.
+
+--CREATE OR REPLACE FUNCTION to_ascii(bytea, name)
+--RETURNS text STRICT AS 'to_ascii_encname' LANGUAGE internal;
 
 -- convert all non-word character sequences to underscore for matching purposes.
 -- this will work at least for latin-1 covered languages.

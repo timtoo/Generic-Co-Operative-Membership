@@ -128,7 +128,7 @@ def load_app_settings(model):
           'help_text': 'A short version of the co-op\'s name, if any'
           },
     )
-    load_data(model, 'name', data)
+    load_data(model, 'name', data, seq=False)
 
 
 def load_member_flag_type(model):
