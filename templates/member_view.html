@@ -86,7 +86,7 @@ Email: <a href="mailto:{{ member.user.email }}">{{ member.user.email }}</a><br>
             </td>
             <td>{{note.member_event_detail}}
             </td>
-            <td><a href="/coop/member/{{note.added_by.member.member_id}}">{{note.added_by.first_name}}</a><br>
+            <td><a href="/coop/member/{{note.added_by.member.all.0}}" title="{{note.added_by.get_full_name}}">{{note.added_by.username}}</a>
             </td>
           </tr>
           {% endfor %}
@@ -106,7 +106,7 @@ Email: <a href="mailto:{{ member.user.email }}">{{ member.user.email }}</a><br>
             </td>
             <td>{{event.member_event_detail}}
             </td>
-            <td>{{event.added_by.first_name}}<br>
+            <td><a href="/coop/member/{{event.added_by.member.all.0}}" title="{{event.added_by.get_full_name}}">{{event.added_by.username}}</a>
             </td>
           </tr>
           {% endfor %}
