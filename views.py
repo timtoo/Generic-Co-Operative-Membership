@@ -242,6 +242,8 @@ def member_update(request):
             member.member_resigned_date = datetime.datetime.today()
             member.member_status_id = 3
             member.save()
+            member.user.is_active = False
+            member.user.save()
             viewlib.logEvent(request, 3, request.POST['member_id'],
                     request.POST.get('resign-reason') or '')
 
