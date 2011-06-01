@@ -232,7 +232,7 @@ class Address(models.Model):
     address_line1 = models.CharField(max_length=250, verbose_name="Street address", blank=True)
     address_line2 = models.CharField(max_length=250, verbose_name="Address line 2", blank=True)
     postal_code = models.CharField(max_length=8, blank=True)
-    city = models.ForeignKey('City', db_column='city_id',
+    city = models.ForeignKey('City', db_column='city_id', null=True,
             related_name='addresses', to_field='city_id', db_index=True)
     address_ts = models.DateTimeField(editable=False, auto_now_add=True)
     address_update_ts = models.DateTimeField(editable=False, auto_now=True)
@@ -574,7 +574,7 @@ class MemberGroup(models.Model):
             self.member_group_name = '%s #%s' % (MemberGroupType.objects.get(
                         pk=self.member_group_type_id).member_group_type_label,
                    self.member_group_id)
-        super(MemberGroup, self).save(*args, **kw)
+            self.save()
 
 
 class Role(models.Model):
