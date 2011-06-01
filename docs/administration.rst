@@ -1,8 +1,8 @@
 Creating Members
 ================
 
-Membership records
-
+A member who is part of the "Coop Member Manager" system group (see Security Permissions) will find
+an "Add Member" option on the main menu.
 
 
 
@@ -10,41 +10,48 @@ Security Permissions
 ====================
 
 There are a number of permissions a user must be given in order to
-access various elements of the system. In order to grant/revoke
-permissions, the Admin area must be accessed. From there select "Users".
+access various elements of the system. Most permissions are granted
+by adding a Member/User to a system group. (Important: do not
+confuse the system level groups with the Membership System groups
+as seen on the Member details page.)
 
-This interface is part of Django's user management interface. Search
-for the user you want to modify.
+There are three system level groups available:
 
-In the "User permissions" area of the "Change user" screen you may
-attach/detach a long list of permissions to the user.
+- Coop Member Viewer
+    - can view member information, but make no changes
+    - has access to member search
 
-The permissions relavant to membership management are:
+- Coop Member Manager
+    - can make changes to member information
+    - "Edit" buttons will be available
+    - "Add Member" will be an option on the main menu
 
-- coop | member | Can view all member details
-- coop | member | Can view limited member details
-- coop | member | Can add member
-- coop | member | Can change member
-- coop | loan | Can change loan
-- coop | work | Can change work
-- coop | member fee | Can change work
+- Coop System Manager
+    - can make changes to membership system data (such as adding new role and flag types)
+    - "Admin" will appear on the main menu
 
+Currently only a "superuser" can add/remove members from the system groups,
+via the system "User" admin page.
 
+If you are a superuser you will see an additional link at the bottom of
+the "Edit" page for a member. This will take you to their system level User admin page.
+On that page, near the bottom, you can add/remove system groups for the user.
 
-System Level Permissions
-------------------------
+Note: in order for any of the above groups to work the Member will need to have
+a password and permission to login. The password and login permission can be set
+via the regular Member Edit page.
 
-In addition to the permissions above, to enable a member to be able to
-manage lower level controls the following permissions are relevant.
+Important: if putting a member in the "Coop System Manager" group, you also need to
+check the "is staff" checkbox.
 
-- "Active" controls whether the user is able to login in any way at all.
-- "Staff status" allows the user to access and use the lower level admin pages.
-- "Superuser status" allows the user full access to everything.
-- auth | user | Can change user - lets people change the above settings
+There is a "superuser" flag on the system User admin page. If this is checked then the
+user will have full access to everything with no restrictions.
 
-Users allowed to login will also need to have their password set.
+Permission Details
+``````````````````
 
-
+To see/modify what exact permissions are granted to each of the groups above, a superuser
+can access the /admin/auth/group/ page and view the attached permissions.
 
 
 
