@@ -45,11 +45,14 @@ class BasicAddressForm(forms.ModelForm):
     #                    "city_name || ', ' || province_code || ', ' || alpha2"},
     #                    ).order_by('province__country','city_name'))
 
-    city = CityModelChoiceField(queryset=CityModelChoiceField.qs)
+    city = CityModelChoiceField(queryset=CityModelChoiceField.qs, required=False)
 
     class Meta:
         model = coop.models.Address
         exclude = ('member', 'address_active')
+
+##    def clean_city(self):
+##        return self.cleaned_data['city']
 
     def clean(self):
         if (self.cleaned_data['address_line1'] or \
@@ -98,17 +101,21 @@ class AddMemberForm(forms.ModelForm):
             max_length=coop.models.Member._meta.get_field_by_name(
             'member_phone')[0].max_length, required=False)
 
-    is_active = forms.BooleanField(label="Can Login")
-    new_pass = forms.CharField(label="New Password", min_length=8, max_length=250, required=False)
-
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'email', 'username', 'member_phone', 'is_active', 'new_pass')
+        fields = ('first_name', 'last_name', 'email', 'username', 'member_phone')
 
 class EditMemberForm(AddMemberForm):
     member_id = forms.IntegerField(widget=forms.HiddenInput())
     email_status = forms.CharField(max_length=3, widget=forms.Select(
-            choices=(('D', 'Do not email'), ('V', 'Valid'), ('I', 'Invalid'), ('C', 'C'))))
+            choices=(('D', 'Do not email'), ('V', 'Valid'), ('I', 'Invalid'), ('C', 'C?'))))
+    is_active = forms.BooleanField(label="Can Login")
+    new_pass = forms.CharField(label="New Password", min_length=8, max_length=250, required=False)
+
+    class Meta:
+        fields = ('first_name', 'last_name', 'email', 'username',
+                'member_phone', 'email_status', 'is_active', 'new_pass')
+
 
 
 class MemberEventForm(forms.ModelForm):

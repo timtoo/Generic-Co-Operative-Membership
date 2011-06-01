@@ -165,7 +165,7 @@ def member_add(request):
             coop.signals.post_member_add_save.send(member_add,
                         request=request, user=new_user,
                         member=new_member, address=new_address,
-                        member_group=member_group)
+                        member_group=member_group, created=True)
 
 
             return HttpResponseRedirect('/coop/member/%s' % new_member.member_id)
