@@ -44,6 +44,8 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 from settings import *
 
 from django.db import connection, transaction
+from django.db.models import Q
+import django.contrib.auth.models
 
 SETUPDB_DONE=False
 
@@ -328,6 +330,44 @@ def load_fee_type(model):
     )
     load_data(model, 'fee_type_id', data)
 
+def setup_auth():
+    print "Setting up permissions..."
+
+    # create groups
+    groups = {
+            'Coop System Manager': None,
+            'Coop Member Manager': None,
+            'Coop Member Viewer': None
+            }
+    for g in groups.keys():
+        groups[g], created = django.contrib.auth.models.Group.objects.get_or_create(name=g)
+        if created:
+            print "Created group: %s..." % g
+            groups[g].save()
+
+    # System Manager (add create/modify to the following tables)
+    add_change_models = ('city', 'appsettings', 'commtype', 'country',
+            'feetype', 'loantype', 'membereventtype', 'memberflagtype',
+            'resignationreasonlist', 'rewardtype', 'roletype',
+            'workactivity', 'worktype')
+
+    for ac in add_change_models:
+        for p in django.contrib.auth.models.Permission.objects.filter(
+                Q(codename__startswith='add_') | Q(codename__startswith='change_'),
+                content_type__app_label='coop', content_type__model=ac):
+            groups['Coop System Manager'].permissions.add(p.id)
+
+    # Member Manager (add change_member -- used by coop app for many permissions)
+    p = django.contrib.auth.models.Permission.objects.get(codename='change_member',
+                content_type__app_label='coop', content_type__model='member')
+    groups['Coop Member Manager'].permissions.add(p.id)
+
+
+    # Member Viewer
+    p = django.contrib.auth.models.Permission.objects.get(codename='view',
+                content_type__app_label='coop', content_type__model='member')
+    groups['Coop Member Viewer'].permissions.add(p.id)
+
 
 def setup_all(sender, **kw):
 
@@ -360,6 +400,7 @@ def setup_all(sender, **kw):
         load_work_activities(sender.WorkActivity)
         load_reward_types(sender.WorkType)
         load_loan_types(sender.LoanType)
+        setup_auth()
 
         transaction.commit_unless_managed()
 
