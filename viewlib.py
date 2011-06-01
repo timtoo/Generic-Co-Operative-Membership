@@ -51,15 +51,11 @@ def stats():
     return data
 
 def logEvent(request, event_type_id, member, detail):
-    try:
-        added_by=request.user.member.all()[0]
-    except IndexError:
-        added_by=None
     coop.models.MemberEvent.objects.create(
             event_type_id=event_type_id,
             member_event_detail=detail,
             member_id=member,
-            added_by=added_by
+            added_by=request.user,
             )
 
 
