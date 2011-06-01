@@ -76,14 +76,6 @@ INSERT INTO province (province_id, prcode, province_name, province_norm, provinc
 INSERT INTO province (province_id, prcode, province_name, province_norm, province_code, country_id, admin1) VALUES (6185811, 60, 'Yukon', 'yukon', 'YT', 124, 'CA.12');
 
 
-CREATE TABLE coop_memberfts (
-    member_id integer references coop_member(member_id) primary key not null,
-    member_text text not null,
-    member_fts tsvector not null,
-    member_fts_ts timestamp default current_timestamp
-);
-
-
 -- Create a text representation of all the info we want to make full-text searchable
 CREATE OR REPLACE FUNCTION coop_member_text(integer) RETURNS text AS $$
 DECLARE
