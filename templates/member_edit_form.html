@@ -21,9 +21,18 @@
 {% if not forloop.last %}<hr>{% endif %}
 {% endfor %}
 </fieldset>
+{% if user.is_superuser %}
+<fieldset><legend>System Level Admin</legend>
+<a target="_blank" href="/admin/auth/user/{{member.user.id}}/">Open in new window</a>. Use only
+for setting user <br>group (permissions) and "superuser" flag.
+</fieldset>
+{% endif %}
+<br>
 <input type="Submit" value="Save Changes >>">
 </form>
 </td></tr></table>
+<br>
+<br>
 
 {% endblock content %}
 

@@ -340,7 +340,8 @@ def member_edit(request, member_id=None):
                 changes.extend(member_form._changed_data)
                 # XXX these fields always appear in changes due to being added to form
                 # based on User model, but obviously not in the User instance.
-                changes.remove('member_phone')
+                if 'new_pass' in changes:
+                    changes.remove('new_pass')
                 changes.remove('member_id')
                 changes.remove('email_status')
                 # changes to User need to update Member timestamp
@@ -349,7 +350,6 @@ def member_edit(request, member_id=None):
             if member.has_changed():
                 changes.extend(member._changed_data)
 
-
             for a in addresses:
                 if a.has_changed():
                     changes.extend(a._changed_data)
@@ -357,6 +357,12 @@ def member_edit(request, member_id=None):
             member_form.save()
             addresses.save()
             member.save()
+
+            newpass = request.POST.get('new_pass')
+            if newpass and (not instance.user.check_password(newpass)):
+                instance.user.set_password(newpass)
+                instance.user.save()
+                changes.append('password')
 
             if changes:
                 viewlib.logEvent(request, 7, member_id, "Updated "+', '.join(changes))
