@@ -20,9 +20,9 @@
 {% endfor %}
 Phone: {{ member.member_phone }}<br>
 Email: <a href="mailto:{{ member.user.email }}">{{ member.user.email }}</a><br>
-      <br>
 
 {# ------------------------ Buttons ---------------------------- #}
+<br style="clear: both">
 {% if perms.coop.change_member %}
 <a id="edit-member-button" class="button" href="/coop/member/{{member.member_id}}/edit">Edit</a>
 <a id="add-hours-button" class="button">Work Hours</a>
@@ -117,6 +117,7 @@ Email: <a href="mailto:{{ member.user.email }}">{{ member.user.email }}</a><br>
 Joined: {{member.member_ts}}&nbsp; {% if member.member_resigned_date %}(Resigned: {{member.member_resigned_date}}){% endif %}<br>
 Updated: {{member.member_update_ts}}
       <br>
+<br>
 <a class="button" id="work-log-button" href="#">Work Log</a>
 <a class="button" id="fee-log-button" href="#">Fee Log</a>
 {% if user.is_staff %}<a class="button" id="permissions-button" href="#">Permissions</a>{% endif %}

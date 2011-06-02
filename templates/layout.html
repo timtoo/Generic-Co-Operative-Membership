@@ -10,7 +10,7 @@
 {% block head %}{% endblock head %}
 </head>
 <body><div id="header-hover"><div id="header" class="bg-header"><div id="header-branding" style="float: left"><a href="/coop/" style="color: inherit; text-decoration: inherit; font: inherit">{{ settings.coop_name }} Membership System</a></div>Login: {{ user.username|default:"?" }}
-</div><ul class="header-menu header bg-header" style="position: absolute; display: none; margin: 0px;">
+</div><ul class="header-menu header bg-header" style="position: absolute; display: none; margin: 0px; z-index: 999">
 {% if perms.coop.view %}<li><a href="/coop/member/search">Find Member</a></li>{% endif %}
 {% if perms.coop.add_member %}<li><a href="/coop/member/add">Add Member</a></li>{% endif %}
 {% if user.is_staff %}<li><a href="/admin/">Admin</a></li>{% endif %}
