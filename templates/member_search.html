@@ -16,7 +16,7 @@
 <br>
 {% for r in results.object_list %}
 <div class="result-item">
-<b class="member-status-{{r.member.member_status_id}}">{{r.member.get_full_name_reverse}}</b>
+<b class="member-status-{{r.member.member_status_id}}" onclick="click(this);">{{r.member.get_full_name_reverse}}</b>
 [<a href="/coop/member/{{r.member_id}}">{{r.member.user.username}}</a>]
 {% if r.member.user.email %}&lt;<a href="mailto:{{r.member.user.email}}">{{r.member.user.email}}</a>&gt;{% endif %}
 
@@ -25,6 +25,12 @@
 <br>
 
 {% endfor %}
+
+<script type="text/javascript">
+var click = function(obj) {
+    window.location = obj.parentNode.getElementsByTagName('a')[0].href;
+}
+</script>
 
 {% include "pager.html" with uri="/coop/member/search" page=results qs=QUERY_STRING %}
 
