@@ -164,5 +164,19 @@ ul.errorlist {
 }
 
 .grid td {
-    padding-right: 0.5em
+    border-right: 1px solid #aaaaaa;
+    padding-right: 0.33em;
+    padding-left: 0.33em;
+    padding-top: 0.25em;
+    padding-bottom: 0.25em;
+}
+
+.grid td:last-child {
+    border-right: none;
+}
+
+.float-block {
+      float: left;
+      margin-bottom: 1em;
+      margin-right: 1em;
 }

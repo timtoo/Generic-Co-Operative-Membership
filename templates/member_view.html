@@ -76,9 +76,8 @@ Email: <a href="mailto:{{ member.user.email }}">{{ member.user.email }}</a><br>
 
 {# ------------------------ NOTES ---------------------------- #}
       <div>
-      <div class="subhead bg-subhead">Notes:<div id="add-note-button" style="float: right; cursor: pointer">[<span style="color: orange">new note</span>]</div></div>
-      <div class="subblock">
-      <table style="text-align: left;" border="1" cellpadding="2" cellspacing="0" width="100%">
+      <table style="text-align: left;" border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
+        <thead><th colspan="3">Notes:<div id="add-note-button" style="float: right; cursor: pointer">[<span style="color: orange">new note</span>]</th></thead>
         <tbody>
           {% for note in notes %}
           <tr class="{% cycle "" "bg-shaded" %}">
@@ -92,11 +91,9 @@ Email: <a href="mailto:{{ member.user.email }}">{{ member.user.email }}</a><br>
           {% endfor %}
         </tbody>
       </table>
-      </div>
-      </div>
       <br>
-      <div class="subhead bg-subhead">Recent Events:</div>
-      <table style="text-align: left;" border="1" cellpadding="2" cellspacing="0" width="100%">
+      <table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
+        <thead><th colspan="4" style="text-align: left">Recent Events:</th></thead>
         <tbody>
           {% for event in events %}
           <tr class="{% cycle "" "bg-shaded" %}">
@@ -113,10 +110,16 @@ Email: <a href="mailto:{{ member.user.email }}">{{ member.user.email }}</a><br>
         </tbody>
       </table>
       <br>
-      <div class="subhead bg-subhead">Details:</div>
+      <table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
+        <thead><th colspan="4" style="text-align: left">Details:</th></thead>
+        <tbody><tr>
+            <td>
 Joined: {{member.member_ts}}&nbsp; {% if member.member_resigned_date %}(Resigned: {{member.member_resigned_date}}){% endif %}<br>
 Updated: {{member.member_update_ts}}
-      <br>
+        </td>
+        </tr>
+        </tbody>
+        </table>
 <br>
 <a class="button" id="work-log-button" href="#">Work Log</a>
 <a class="button" id="fee-log-button" href="#">Fee Log</a>
@@ -134,8 +137,6 @@ $(function() {
 
 <div><br>
 </div>
-
-<br>
 
 <br>
 
