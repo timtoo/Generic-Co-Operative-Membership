@@ -1,28 +1,7 @@
-
-- ui: add note
-- ui: event (same as add note?)
-- ui: assign required work / add hours completed
-- ui: display loan amount
-
-- ui status: support for work required colours
-- ui status: support for loan status
-- ui status: fees owed status
-
-- edit: member
-- add: member
-    - test ugly UI
-    - auto-complete for city
-
-- autocomplete for search interface? (last name?)
+- double check not allowing blank notes
 
 - add city interface
 
-- add fee table?
-    - think of a better name: money
-    - how to handle recurring fees?
-        - are fees due on set dates, annual, quarterly, etc?
-- ui: add fee owed
-    -
 - ui: limited member view
 
 - ability to update some data without making changes live
@@ -30,29 +9,36 @@
         in the event table. Staff can write note describing
         changes / attention needed.
 
-- setup groups if needed during syncdb
-- fix dropdown : list item style problem
-- random active member feature (for me)
-
-
-- add data to main page
-    - new members this month, last month (graph?)
-
 - add reports
     - check reports in old access database to clone
+
+- on deactivation: if member has an active loan refund requested flag?
+    - on loan refund, remove loan requested flag
+
+- cron: add required work on schedule
+
+- cron: add fee records as needed
+
+- work log
+- fee log
+
 
 
 Later
 ------
 
+- autocomplete for search interface? (last name?)
+- ui: improve fee select: indicate recuring and other details
 - report of which members have what permissions
 - add support for full text search on events
-- add search form to menu
+- add search form to menu?
+
 
 
 Longer Term
 ----------
 - Easier UI for setting permissions for members
+- auto-complete for city (current select control is not scalable)
 - "live search"
 - improve search results ui (small target for clicking)
 
@@ -71,5 +57,10 @@ Longer Term
 
 - add 'important' (sticky)  status for notes which remain at top (and
   maybe shaded or outlined for attention)
+
+- add "needs attention" flag on notes.
+    - which means we need a way to remove the needs attention flag
+    - record who (last to) removes flag
+
 
 
