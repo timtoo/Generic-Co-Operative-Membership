@@ -147,6 +147,7 @@ class WorkManager(models.Manager):
         hours['owed'] = hours['assigned_hours'] - hours['fulfilled_hours']
         return hours
 
+
 # -------------------------------------------------------------------
 # Location models
 # -------------------------------------------------------------------
@@ -507,6 +508,23 @@ class Member(models.Model):
     def get_full_name_reverse(self):
         return ', '.join([x for x in (self.user.last_name, self.user.first_name) if x])
 
+    @property
+    def notes(self):
+        """Return queryset of events which are notes"""
+        return self.events.filter(event_type__in = [1,2])
+
+    @property
+    def not_notes(self):
+        """Return queryset of events which are not notes"""
+        return self.events.exclude(event_type__in = [1,2])
+
+    def flags_avilable(self):
+        """Return queryset of active flags,
+        excluding the ones already attached to member"""
+        return MemberFlagType.objects.filter(
+                member_flag_type_active=True).exclude(
+                member_flag_type_id__in=self.flags.values('flag_type'))
+
 
 class MemberFts(models.Model):
     member = models.ForeignKey('Member', primary_key=True, editable=False,
@@ -575,6 +593,20 @@ class MemberGroup(models.Model):
                         pk=self.member_group_type_id).member_group_type_label,
                    self.member_group_id)
             self.save()
+
+    @property
+    def notes(self):
+        """Return queryset of events which are notes"""
+        return MemberEvent.objects.filter(
+                member__membergroup=self.member_group_id,
+                event_type__in = [1,2])
+
+    @property
+    def not_notes(self):
+        """Return queryset of events which are not notes"""
+        return MemberEvent.objects.filter(
+                member__membergroup=self.member_group_id
+                ).exclude(event_type__in = [1,2])
 
 
 class Role(models.Model):

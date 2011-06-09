@@ -49,18 +49,10 @@ def member_group_view(request, member_group_id):
     group = coop.models.MemberGroup.objects.get(pk=member_group_id)
     members = group.group_members.order_by('member__user__last_name',
             'member__user__first_name', 'member__member_id')
-    notes = coop.models.MemberEvent.objects.filter(
-            member__membergroup=group.member_group_id,
-            event_type__in = [1,2])[:10]
-    events = coop.models.MemberEvent.objects.filter(
-            member__membergroup=group.member_group_id).exclude(
-            event_type__in = [1,2])[:10]
-
-    print notes
-    print events
 
     return render(request, 'member_group_view.html', {'group': group,
-            'members': members, 'notes': notes, 'events': events})
+            'members': members, 'notes': group.notes[:10],
+            'events': group.not_notes[:10]})
 
 @permission_required('coop.view')
 def member_view(request, member_id=None):
@@ -69,8 +61,6 @@ def member_view(request, member_id=None):
 
     member = coop.models.Member.objects.get(member_id=member_id)
     addresses = member.addresses.filter(address_active=True)
-    notes = member.events.filter(event_type__in = [1,2])[:5]
-    events = member.events.exclude(event_type__in = [1,2])[:5]
 
     hours = member.get_work_summary()
     fees = member.get_fee_summary()
@@ -100,10 +90,9 @@ def member_view(request, member_id=None):
             'FeeType').filter(member=member, fee_paid_ts__isnull=True)
     fee_form = coop.forms.AddFeeForm()
 
-
     return render(request, 'member_view.html',
-            {'member': member, 'addresses': addresses, 'notes': notes,
-                'events': events, 'hours': hours, 'fees': fees,
+            {'member': member, 'addresses': addresses, 'notes': member.notes[:5],
+                'events': member.not_notes[:5], 'hours': hours, 'fees': fees,
                 'loans': loans, 'fee_form': fee_form,
                 'outstanding_fees': outstanding_fees,
                 'add_work_hours_form': coop.forms.AddWorkHoursForm(
