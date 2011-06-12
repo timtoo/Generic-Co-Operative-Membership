@@ -303,12 +303,15 @@ def member_update(request):
                 try:
                     tag = coop.models.MemberFlag.objects.get(pk=id,
                             member=member.member_id)
-                    changes.append('remove tag "%s (%s)"' % (
+                    changes.append('remove tag "%s" (%s)' % (
                             tag.flag_type.member_flag_type_label,
                             tag.flag_type.member_flag_type_id))
+                    if tag.member_flag_detail:
+                        changes[-1] = changes[-1][:-1] + ', detail: %s)' % (
+                                tag.member_flag_detail,)
                     tag.delete()
                 except coop.models.MemberFlag.DoesNotExist:
-                    logger.warn("Attempt to delete non-existing flag %s for member %s", id, member.meber_id)
+                    logger.warn("Attempt to delete non-existing flag %s for member %s", id, member.member_id)
             elif k.startswith('tag-detail-'):
                 id = int(k[11:])
                 try:
@@ -321,7 +324,7 @@ def member_update(request):
                         tag.member_flag_detail = request.POST[k]
                         tag.save()
                 except coop.models.MemberFlag.DoesNotExist:
-                    logger.warn("Attempt to change non-existing flag %s for member %s", id, member.meber_id)
+                    logger.warn("Attempt to change non-existing flag %s for member %s", id, member.member_id)
 
         if request.POST.get('add-tag'):
             tag = coop.models.MemberFlagType.objects.get(pk=request.POST['add-tag'])
