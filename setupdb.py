@@ -137,18 +137,21 @@ def load_member_flag_type(model):
         'member_flag_type_id': 1,
         'member_flag_type_label': 'Working Member',
         'member_flag_type_description': 'The member should be assigned required work hours',
+        'member_flag_type_active': True,
         'member_flag_type_system': True
         },
         {
         'member_flag_type_id': 2,
         'member_flag_type_label': 'Working Exception',
         'member_flag_type_description': 'The member is exempt from working',
+        'member_flag_type_active': True,
         'member_flag_type_system': True
         },
         {
         'member_flag_type_id': 3,
         'member_flag_type_label': 'Loan Refund Requested',
         'member_flag_type_description': 'Member has requested their loan(s) be refunded',
+        'member_flag_type_active': True,
         'member_flag_type_system': True
         },
     )

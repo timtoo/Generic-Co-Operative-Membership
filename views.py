@@ -15,7 +15,7 @@
 # along with Generic Co-operative Membership System.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-import random,time,datetime,re
+import random,time,datetime,re,logging
 
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
@@ -30,9 +30,11 @@ import coop.models
 import coop.signals
 from coop import viewlib
 
+logger = logging.getLogger('console')
+
 try:
     import coop_custom
-    print "Co-op Custom module loaded"
+    logger.info("Co-op Custom module loaded")
 except ImportError:
     coop_custom = None
 
@@ -220,6 +222,8 @@ def member_search(request):
 @permission_required('coop.change_member')
 def member_update(request):
     """All member updates are routed through this function"""
+    member_id = request.POST['member_id']
+    member = coop.models.Member.objects.get(pk=member_id)
 
     if request.POST.get('add-note'):
         viewlib.logEvent(request, 1, request.POST['member_id'],
@@ -227,7 +231,6 @@ def member_update(request):
 
     if request.POST.get('resign'):
         if request.POST.get('confirm-resign'):
-            member = coop.models.Member.objects.get(pk=request.POST['member_id'])
             member.member_resigned_date = datetime.datetime.today()
             member.member_status_id = 3
             member.save()
@@ -238,7 +241,6 @@ def member_update(request):
 
     if request.POST.get('reactivate'):
         if request.POST.get('confirm-reactivate'):
-            member = coop.models.Member.objects.get(pk=request.POST['member_id'])
             member.member_status_id = 1
             member.save()
             viewlib.logEvent(request, 4, request.POST['member_id'], 're-activating')
@@ -258,8 +260,6 @@ def member_update(request):
             print "Silent fail: invalid hours data: %s" % (hours.errors,)
 
     if request.POST.get('add-fee'):
-        member_id = request.POST['member_id']
-
         paid = []
         for k in request.POST.keys():
             if k.startswith('pay-'):
@@ -268,7 +268,7 @@ def member_update(request):
                 fee.save()
                 paid.append(fee)
 
-        viewlib.logEvent(request, 8, member_id, "Paid fee (%s)" % (', '.join(
+        viewlib.logEvent(request, 8, member.member_id, "Paid fee (%s)" % (', '.join(
                 ['%s #%s' % (x.fee_type.fee_type_name, x.fee_id) for x in paid])))
 
         if request.POST.get('fee_type_id') and request.POST.get('fee_amount'):
@@ -277,7 +277,7 @@ def member_update(request):
                 data = { 'fee_type_id': request.POST['fee_type_id'],
                          'fee_amount': re.sub('[^\d.]', '', request.POST['fee_amount']),
                          'fee_note': request.POST['fee_note'] or '',
-                         'member_id': member_id,
+                         'member_id': member.member_id,
                          'fee_ts': datetime.datetime.now(),
                         }
                 if request.POST.get('paid'):
@@ -291,9 +291,46 @@ def member_update(request):
                     message = '%s: %s' % (message, fee.fee_note)
                 message = 'Add %s%s' % (fee.fee_type.fee_type_name, message)
 
-                viewlib.logEvent(request, 8, member_id, message)
+                viewlib.logEvent(request, 8, member.member_id, message)
             except:
                 raise
+
+    if request.POST.get('edit-tags'):
+        changes = []
+        for k in request.POST.keys():
+            if k.startswith('tag-del-'):
+                id = int(k[8:])
+                try:
+                    tag = coop.models.MemberFlag.objects.get(pk=id,
+                            member=member.member_id)
+                    changes.append('remove tag "%s (%s)"' % (
+                            tag.flag_type.member_flag_type_label,
+                            tag.flag_type.member_flag_type_id))
+                    tag.delete()
+                except coop.models.MemberFlag.DoesNotExist:
+                    logger.warn("Attempt to delete non-existing flag %s for member %s", id, member.meber_id)
+            elif k.startswith('tag-detail-'):
+                id = int(k[11:])
+                try:
+                    tag = coop.models.MemberFlag.objects.get(pk=id, member=member.member_id)
+                    if request.POST[k] != tag.member_flag_detail:
+                        changes.append('"%s" (%s) tag detail changed (was: %s)' % (
+                                tag.flag_type.member_flag_type_label,
+                                tag.flag_type.member_flag_type_id,
+                                tag.member_flag_detail))
+                        tag.member_flag_detail = request.POST[k]
+                        tag.save()
+                except coop.models.MemberFlag.DoesNotExist:
+                    logger.warn("Attempt to change non-existing flag %s for member %s", id, member.meber_id)
+
+        if request.POST.get('add-tag'):
+            tag = coop.models.MemberFlagType.objects.get(pk=request.POST['add-tag'])
+            coop.models.MemberFlag.objects.create(flag_type=tag, member_id=member_id)
+            changes.append('added tag "%s" (%s)' % (
+                    tag.member_flag_type_label, tag.member_flag_type_id))
+
+        if changes:
+            viewlib.logEvent(request, 7, member_id, ', '.join(changes))
 
     return HttpResponseRedirect('/coop/member/%d' % int(
             request.POST.get('member_id') or request.POST.get('member')))

@@ -163,6 +163,10 @@ ul.errorlist {
     border-bottom: 1px solid #cccccc;
 }
 
+.left-head th {
+    text-align: left
+}
+
 .grid td {
     border-right: 1px solid #aaaaaa;
     padding-right: 0.33em;

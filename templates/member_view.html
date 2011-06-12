@@ -32,6 +32,7 @@ Email: <a href="mailto:{{ member.user.email }}">{{ member.user.email }}</a><br>
 {% endif %}
 <br style="clear: both"><br>
 
+
 {# ------------------ Role/Group/Flag summary ------------------ #}
 
       <table class="bg-shaded" style="text-align: left; width: 100%;" border="0" cellpadding="0" cellspacing="2">
@@ -67,7 +68,7 @@ Email: <a href="mailto:{{ member.user.email }}">{{ member.user.email }}</a><br>
             {{ flag.flag_type.member_flag_type_label }}{% if flag.member_flag_detail %} ({{flag.member_flag_detail}}){% endif %}{% if not forloop.last %}<br>{% endif %}
             {% endfor %}
             </td>
-            <td>[<a href="#" id="edit-flags-button">edit flags</a>]<br>
+            <td>[<a href="#" id="edit-tags-button">edit flags</a>]<br>
             </td>
           </tr>
         </tbody>
@@ -287,6 +288,38 @@ $(function() {
 </script>
 </div>
 
+{# ############ edit flags popup ############ #}
+<div id="edit-tags-form" title="Edit Tags:">
+<form action="/coop/member/update" method="post"><input type="hidden" name="edit-tags" value="1">
+<input type="hidden" name="member_id" value="{{member.member_id}}">
+<table border="0" cellpadding="0" cellspacing="0" class="grid left-head">
+<tr><th>Del.</th><th>Tag</th><th>Detail</th></tr>
+{% for t in member.flags.all %}
+<tr class="{% cycle "" "bg-shaded" %}">
+<td><input type="checkbox" name="tag-del-{{t.member_flag_id}}"></td>
+<td style="padding-right: 0.5em">{{t.flag_type.member_flag_type_label}}</td>
+<td>{% if t.flag_type.member_flag_type_has_detail %}<input type="text" name="tag-detail-{{t.member_flag_id}}" length="15" style="width: auto" value="{{t.member_flag_detail}}"><input type="hidden" name="tag-orig-{{t.member_flag_id}}" value="{{t.member_flag_detail}}">{% else %}&nbsp;{% endif %}</td>
+</tr>
+{% endfor %}
+</table>
+Add Tag: <select name="add-tag"><option value=""></option>
+{% for t in member.flags_available %}
+<option value="{{ t.member_flag_type_id }}">{{ t.member_flag_type_label }}</option>
+{% endfor %}</select>
+<br><br>
+<div align="center"><input type="submit" value="Save Added/Removed Tags">
+{% csrf_token %}</div>
+</form>
+<script>
+$(function() {
+    $( "#edit-tags-form" ).dialog({ autoOpen: false, width: 'auto', modal: true });
+    $( "#edit-tags-button" ).click(function() { $( "#edit-tags-form" ).dialog( "open" ); });
+});
+</script>
+</div>
+
+{# ############ end of popups ############ #}
+
 <script>
 $(function() {
 //    $( "#test-button" ).button().css({height:'1em'});
@@ -295,7 +328,6 @@ $(function() {
     $( "#permissions-button" ).click(function() { alert('not implemented yet') });
     $( "#edit-groups-button" ).click(function() { alert('not implemented yet') });
     $( "#edit-roles-button" ).click(function() { alert('not implemented yet') });
-    $( "#edit-flags-button" ).click(function() { alert('not implemented yet') });
 });
 </script>
 

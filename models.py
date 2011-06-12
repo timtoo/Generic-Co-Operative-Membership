@@ -518,7 +518,7 @@ class Member(models.Model):
         """Return queryset of events which are not notes"""
         return self.events.exclude(event_type__in = [1,2])
 
-    def flags_avilable(self):
+    def flags_available(self):
         """Return queryset of active flags,
         excluding the ones already attached to member"""
         return MemberFlagType.objects.filter(
