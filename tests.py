@@ -48,9 +48,11 @@ class DatabaseTest(TestCase):
                 province_id=6115047).save()
         city = models.City.objects.all()
         self.assertEqual(len(city), 1)
-        #self.assertEqual(city[0].city_norm, u'quebec_city')
-        # see issue documented in setupdb.sql -- this is hopefully a temporary workaround
-        self.failUnless(city[0].city_norm ==  u'quebec_city' or city[0].city_norm == u'qu_bec_city')
+        if city[0].city_norm == u'qu_bec_city':
+            # see issue documented in setupdb.sql -- this is hopefully a temporary workaround
+            print "WARNING: accent normalization is not set up properly"
+        else:
+            self.assertEqual(city[0].city_norm, u'quebec_city')
         self.assertEqual(city[0].city_id, 1)
 
         # province_id=-1 doesn't raise an error because ref check is deferred

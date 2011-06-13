@@ -12,7 +12,8 @@ CREATE LANGUAGE plpgsql;
 
 -- see: http://www.laudatio.com/wordpress/2008/11/05/postgresql-83-to_ascii-utf8/
 -- NOTE: must be executed by superuser to access "language internal".
--- It would be better to use postgresql 9+ unaccent() function.
+-- It would be better to use postgresql 9+ unaccent() function (also requiring
+-- superuser access, and manual setup of the postgresql contrib module).
 -- For now we assume the following has been executed on the database
 -- prior to this point.
 
