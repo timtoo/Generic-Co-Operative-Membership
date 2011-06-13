@@ -31,7 +31,7 @@
 
 </table>
 
-[<a href="/coop/member/add?member_group_id={{ group.member_group_id }}">Add New Member</a>]
+{% if perms.coop.add_member %}[<a href="/coop/member/add?member_group_id={{ group.member_group_id }}">Add New Member</a>]{% endif %}
 
 <br><br>
       <div class="float-block">
