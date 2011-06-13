@@ -35,6 +35,10 @@ not actually after it (as one would expect judging by the name -- yet another
 django database setup issue). This could cause complications.
 
 Until a better method is found...
+
+This loads the file sql/setupdb.sql and sql/setupdb_custom.sql which is regular
+SQL enhanced with a few directives that can be placed in SQL comments to do things
+such as check if data is already loaded. It also can include other files.
 """
 import os
 import logging
@@ -89,7 +93,7 @@ def load_sql_blocks(filename='setupdb.sql', ignore_checks=False):
                 current_block.append(l)
         append_block(blocks, current_check, current_block)
     else:
-        raise RuntimeError, "setupdb: can't read file: %s" % sql
+        print "WARNING: file does not exist: %s" % sql
 
     return blocks
 
@@ -168,7 +172,7 @@ def load_role_type(model):
         },
         {
         'role_type_id': 2,
-        'role_type_label': 'Board Member',
+        'role_type_label': 'Board',
         'role_type_description': 'The member serves on the board of directors',
         'role_type_active': True,
         'role_type_ts': 'now',
@@ -181,9 +185,9 @@ def load_role_type(model):
         'role_type_ts': 'now',
         },
         {
-        'role_type_id': 3,
+        'role_type_id': 4,
         'role_type_label': 'Committee',
-        'role_type_description': 'The member serves on a committee',
+        'role_type_description': 'The member serves on a committee.',
         'role_type_active': True,
         'role_type_ts': 'now',
         },
@@ -382,7 +386,10 @@ def setup_all(sender, **kw):
     SETUPDB_DONE=True
 
     if sender.__name__ == 'coop.models':
-        blocks = load_sql_blocks(ignore_checks=kw.get('ignore_checks'))
+        blocks = load_sql_blocks('setupdb.sql',
+                ignore_checks=kw.get('ignore_checks'))
+        blocks.extend(load_sql_blocks('setupdb_custom.sql',
+                ignore_checks=kw.get('ignore_checks')))
         cursor = connection.cursor()
         for sql in blocks:
             try:

@@ -19,6 +19,13 @@ CREATE LANGUAGE plpgsql;
 --CREATE OR REPLACE FUNCTION to_ascii(bytea, name)
 --RETURNS text STRICT AS 'to_ascii_encname' LANGUAGE internal;
 
+-- this is a placeholder function until the issue above is sorted out;
+-- the above function should be created as superuser if possible
+CREATE OR REPLACE FUNCTION to_ascii(bytea, name)
+RETURNS text IMMUTABLE LANGUAGE SQL AS $$
+SELECT convert_from($1, $2)
+$$;
+
 -- convert all non-word character sequences to underscore for matching purposes.
 -- this will work at least for latin-1 covered languages.
 CREATE OR REPLACE FUNCTION ascii_normalize(text)
