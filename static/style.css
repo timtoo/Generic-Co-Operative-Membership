@@ -107,7 +107,7 @@ form p {
 form label {
     width: 8em;
     display: inline-block;
-    background: #eee;
+    background: #eeeeee;
     padding: 1px 5px 1px 5px;
     margin: 0px;
     border-radius: 5px 0px 0px 5px;
@@ -138,8 +138,12 @@ ul.errorlist {
     max-width: 610px;
 }
 
-.result-item {
+.result-item:hover {
+    background-color: #eeeeee;
+}
 
+.result-name {
+    cursor: pointer
 }
 
 .result-snippet {
