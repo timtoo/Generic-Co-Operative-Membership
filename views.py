@@ -226,8 +226,9 @@ def member_update(request):
     member = coop.models.Member.objects.get(pk=member_id)
 
     if request.POST.get('add-note'):
-        viewlib.logEvent(request, 1, request.POST['member_id'],
-                request.POST['member_event_detail'])
+        if request.POST.get('member_event_detail', '').strip():
+            viewlib.logEvent(request, 1, request.POST['member_id'],
+                    request.POST['member_event_detail'])
 
     if request.POST.get('resign'):
         if request.POST.get('confirm-resign'):
