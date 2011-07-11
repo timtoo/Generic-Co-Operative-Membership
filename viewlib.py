@@ -36,17 +36,21 @@ def stats():
         count=models.Count('member_status')).order_by(
         'member_status__member_status_label')
 
-    data['new_members'] = [ str(x['count']) for x in tuple(coop.util.queryDict("""
+    data['new_member_summary'] =  tuple(coop.util.queryDict("""
             select cast(date_trunc('month',member_ts) as date) AS "date",
-                count(date_trunc('month',member_ts)) AS "count"
+                count(date_trunc('month',member_ts)) AS "count",
+                max(member_ts) AS "latest",
+                min(member_ts) AS "newest"
                 from coop_member group by date_trunc('month',member_ts)
-                order by date_trunc('month',member_ts)
-            """))[-18:] ]
-    data['new_members_list'] = ','.join(data['new_members'])
-    if len(data['new_members'])>0:
-        data['new_members_this_month'] = data['new_members'][-1]
-    if len(data['new_members'])>1:
-        data['new_members_last_month'] = data['new_members'][-2]
+                order by date_trunc('month',member_ts) DESC
+                LIMIT 18
+            """))
+    data['new_members_list'] = ','.join(reversed([str(x['count']) for x in data['new_member_summary']]))
+    if len(data['new_member_summary'])>0:
+        data['new_members_this_month'] = data['new_member_summary'][0]['count']
+        data['newest_member_date'] = data['new_member_summary'][0]['latest']
+    if len(data['new_member_summary'])>1:
+        data['new_members_last_month'] = data['new_member_summary'][1]['count']
 
     return data
 

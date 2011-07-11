@@ -32,8 +32,8 @@
       <br><br>
 
 
-      New members this month: {{ data.new_members_this_month|default:0 }}
-      (Last month:{{ data.new_members_last_month|default:0 }})
+      New members this month ({{data.newest_member_date|date:"M j, Y"}}): {{ data.new_members_this_month|default:0 }}
+      (Prev. month: {{ data.new_members_last_month|default:0 }})
 
       <span class="spark">{{ data.new_members_list }}</span>
       <script type="text/javascript">
